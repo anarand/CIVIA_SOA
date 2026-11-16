@@ -189,10 +189,3 @@ O mesmo roteiro pode ser executado automaticamente para conferência: `powershel
 | [`evidencias/05-swagger-api-implementada.png`](evidencias/05-swagger-api-implementada.png) | Swagger UI da API em execução |
 | [`evidencias/06-swagger-contrato.png`](evidencias/06-swagger-contrato.png) | Swagger UI exibindo o contrato escrito antes do código |
 | `evidencias/insomnia/` | Capturas de tela da coleção executada no Insomnia, uma por requisição (feitas pela equipe) |
-
-## Limitações conhecidas
-
-- **Sem autenticação:** qualquer cliente pode acessar todos os recursos. Em produção, os dados de usuários, contatos e solicitações exigiriam autenticação e autorização (por exemplo, JWT ou OAuth 2.0) e tratamento conforme a LGPD.
-- **Sem notificações reais:** uma solicitação de ajuda ou SOS é apenas registrada; nenhuma mensagem é enviada ao contato.
-- **Alertas simulados:** os alertas urbanos são cadastrados manualmente, sem integração com fontes oficiais.
-- **Contrato mantido à mão:** `docs/openapi.yaml` é atualizado manualmente; o script de comparação detecta divergências de rotas e status codes, mas não de campos.
