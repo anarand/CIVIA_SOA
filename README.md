@@ -16,7 +16,7 @@ O CIVIA é uma proposta de tecnologia assistiva para ajudar pessoas cegas, com b
 
 Neste repositório está só o backend: uma API REST em ASP.NET Core que guarda os dados que o aplicativo usaria. Ela permite cadastrar:
 
-- usuários e suas preferências de acessibilidade (áudio, vibração, legenda, alto contraste);
+- usuários e suas preferências de acessibilidade, como canal principal (áudio, vibração, legenda ou visual), alto contraste e preferência por elevador;
 - locais de rotina, como casa, trabalho e estações;
 - contatos de confiança, que podem receber pedidos de ajuda;
 - pedidos de ajuda e SOS, com controle de status;
@@ -31,7 +31,7 @@ Como é um trabalho acadêmico, implementamos apenas uma parte da proposta. A in
 - Migrations do EF Core
 - OpenAPI 3.0, Swagger UI e Insomnia
 
-## Contrato primeiro
+## Contrato antes do código
 
 Antes de começar o código, escrevemos o contrato da API em [`docs/openapi.yaml`](docs/openapi.yaml), com as rotas, os schemas, exemplos e o formato dos erros (Problem Details). Depois implementamos as entidades, o `DbContext` e os controllers seguindo esse contrato.
 
@@ -84,7 +84,7 @@ Todas as rotas começam com `http://localhost:5080/api`.
 | Preferências | `GET`, `PUT /usuarios/{usuarioId}/preferencias` |
 | Locais de rotina | `GET`, `POST /usuarios/{usuarioId}/locais` e `GET`, `PUT`, `DELETE /usuarios/{usuarioId}/locais/{localId}` |
 | Contatos de confiança | `GET`, `POST /usuarios/{usuarioId}/contatos` e `GET`, `PUT`, `DELETE /usuarios/{usuarioId}/contatos/{contatoId}` |
-| Pedidos de ajuda | `GET` (filtro `?status=`), `POST /usuarios/{usuarioId}/solicitacoes`, `GET .../{solicitacaoId}` e `PATCH .../{solicitacaoId}/status` |
+| Pedidos de ajuda e SOS | `GET` (filtro `?status=`), `POST /usuarios/{usuarioId}/solicitacoes`, `GET .../{solicitacaoId}` e `PATCH .../{solicitacaoId}/status` |
 | Alertas | `GET` (filtros `?tipo=` e `?ativo=`), `POST /alertas` e `GET`, `PUT`, `DELETE /alertas/{alertaId}` |
 
 Status de resposta usados: 200, 201 (com header `Location`), 204, 400, 404 e 409. Os erros voltam neste formato:
@@ -101,6 +101,8 @@ Status de resposta usados: 200, 201 (com header `Location`), 204, 400, 404 e 409
 ## Estrutura de pastas
 
 ```
+Civia.sln
+dotnet-tools.json  versão do dotnet-ef usada no projeto
 Civia.Api/
   Models/         entidades e enums
   Dtos/           objetos de entrada e saída, com validações
@@ -163,7 +165,8 @@ Comandos úteis:
 
 São 45 requisições divididas em 7 pastas, testando os casos de sucesso e também os de erro (400, 404 e 409).
 
-Também dá para rodar tudo de uma vez pelo script `scripts\executar-roteiro.ps1`.
+Também dá para rodar tudo de uma vez, com a API no ar, pelo script:
+`powershell -ExecutionPolicy Bypass -File scripts\executar-roteiro.ps1`
 
 ## Evidências
 
