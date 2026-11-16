@@ -1,0 +1,902 @@
+{
+    "_type":  "export",
+    "__export_format":  4,
+    "__export_date":  "2026-11-16T02:04:59.9750693Z",
+    "__export_source":  "insomnia.desktop.app:v13.4.0",
+    "resources":  [
+                      {
+                          "_id":  "wrk_civia",
+                          "_type":  "workspace",
+                          "parentId":  null,
+                          "name":  "CIVIA API",
+                          "scope":  "collection",
+                          "description":  "Testes manuais da API CIVIA. Execute as requisições em ordem, com o banco recém-criado pela migration."
+                      },
+                      {
+                          "_id":  "env_civia_base",
+                          "_type":  "environment",
+                          "parentId":  "wrk_civia",
+                          "name":  "Base Environment",
+                          "data":  {
+                                       "base_url":  "http://localhost:5080/api"
+                                   }
+                      },
+                      {
+                          "_id":  "fld_civia_1",
+                          "_type":  "request_group",
+                          "parentId":  "wrk_civia",
+                          "name":  "1. Usuários",
+                          "metaSortKey":  100
+                      },
+                      {
+                          "_id":  "req_civia_01",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_1",
+                          "name":  "01 Criar usuária Ana (201)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios",
+                          "description":  "Status esperado: 201",
+                          "metaSortKey":  1,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"Ana Teste\",\r\n    \"email\":  \"ana.teste@civia.dev\",\r\n    \"tipoDeficiencia\":  \"BAIXA_VISAO\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_02",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_1",
+                          "name":  "02 Criar usuário Bruno (201)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios",
+                          "description":  "Status esperado: 201",
+                          "metaSortKey":  2,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"Bruno Teste\",\r\n    \"email\":  \"bruno.teste@civia.dev\",\r\n    \"tipoDeficiencia\":  \"SURDEZ\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_03",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_1",
+                          "name":  "03 Email já cadastrado (409)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios",
+                          "description":  "Status esperado: 409",
+                          "metaSortKey":  3,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"Ana Outra\",\r\n    \"email\":  \"ANA.TESTE@civia.dev\",\r\n    \"tipoDeficiencia\":  \"CEGUEIRA\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_04",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_1",
+                          "name":  "04 Dados inválidos (400)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios",
+                          "description":  "Status esperado: 400",
+                          "metaSortKey":  4,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"A\",\r\n    \"email\":  \"email-invalido\",\r\n    \"tipoDeficiencia\":  \"DALTONISMO\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_05",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_1",
+                          "name":  "05 Listar usuários (200)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/usuarios",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  5,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_06",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_1",
+                          "name":  "06 Consultar usuária (200)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/usuarios/1",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  6,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_07",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_1",
+                          "name":  "07 Usuário inexistente (404)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/usuarios/999",
+                          "description":  "Status esperado: 404",
+                          "metaSortKey":  7,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_08",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_1",
+                          "name":  "08 Atualizar usuário (200)",
+                          "method":  "PUT",
+                          "url":  "{{ _.base_url }}/usuarios/2",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  8,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"Bruno Teste Silva\",\r\n    \"email\":  \"bruno.teste@civia.dev\",\r\n    \"tipoDeficiencia\":  \"PERDA_AUDITIVA\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "fld_civia_2",
+                          "_type":  "request_group",
+                          "parentId":  "wrk_civia",
+                          "name":  "2. Preferências",
+                          "metaSortKey":  200
+                      },
+                      {
+                          "_id":  "req_civia_09",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_2",
+                          "name":  "09 Preferências ainda não configuradas (404)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/usuarios/1/preferencias",
+                          "description":  "Status esperado: 404",
+                          "metaSortKey":  9,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_10",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_2",
+                          "name":  "10 Salvar preferências (200)",
+                          "method":  "PUT",
+                          "url":  "{{ _.base_url }}/usuarios/1/preferencias",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  10,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"canalPrincipal\":  \"AUDIO\",\r\n    \"vibracaoAtiva\":  true,\r\n    \"altoContraste\":  false,\r\n    \"priorizarElevador\":  true\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_11",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_2",
+                          "name":  "11 Consultar preferências (200)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/usuarios/1/preferencias",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  11,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_12",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_2",
+                          "name":  "12 Preferências incompletas (400)",
+                          "method":  "PUT",
+                          "url":  "{{ _.base_url }}/usuarios/1/preferencias",
+                          "description":  "Status esperado: 400",
+                          "metaSortKey":  12,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"canalPrincipal\":  \"AUDIO\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "fld_civia_3",
+                          "_type":  "request_group",
+                          "parentId":  "wrk_civia",
+                          "name":  "3. Locais de rotina",
+                          "metaSortKey":  300
+                      },
+                      {
+                          "_id":  "req_civia_13",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_3",
+                          "name":  "13 Cadastrar estação (201)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios/1/locais",
+                          "description":  "Status esperado: 201",
+                          "metaSortKey":  13,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"Estação da Luz\",\r\n    \"tipo\":  \"ESTACAO\",\r\n    \"endereco\":  \"Praça da Luz, 1 - Luz, São Paulo - SP\",\r\n    \"latitude\":  -23.5345,\r\n    \"longitude\":  -46.6345\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_14",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_3",
+                          "name":  "14 Cadastrar casa (201)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios/1/locais",
+                          "description":  "Status esperado: 201",
+                          "metaSortKey":  14,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"Casa\",\r\n    \"tipo\":  \"CASA\",\r\n    \"endereco\":  \"Rua Fictícia, 100 - São Paulo - SP\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_15",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_3",
+                          "name":  "15 Coordenada inválida (400)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios/1/locais",
+                          "description":  "Status esperado: 400",
+                          "metaSortKey":  15,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"Trabalho\",\r\n    \"tipo\":  \"TRABALHO\",\r\n    \"endereco\":  \"Av. Paulista, 1000\",\r\n    \"latitude\":  120\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_16",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_3",
+                          "name":  "16 Listar locais (200)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/usuarios/1/locais",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  16,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_17",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_3",
+                          "name":  "17 Atualizar local (200)",
+                          "method":  "PUT",
+                          "url":  "{{ _.base_url }}/usuarios/1/locais/1",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  17,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"Estação da Luz (CPTM)\",\r\n    \"tipo\":  \"ESTACAO\",\r\n    \"endereco\":  \"Praça da Luz, 1 - Luz, São Paulo - SP\",\r\n    \"latitude\":  -23.5345,\r\n    \"longitude\":  -46.6345\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_18",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_3",
+                          "name":  "18 Local de outro usuário (404)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/usuarios/2/locais/1",
+                          "description":  "Status esperado: 404",
+                          "metaSortKey":  18,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_19",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_3",
+                          "name":  "19 Excluir local (204)",
+                          "method":  "DELETE",
+                          "url":  "{{ _.base_url }}/usuarios/1/locais/2",
+                          "description":  "Status esperado: 204",
+                          "metaSortKey":  19,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "fld_civia_4",
+                          "_type":  "request_group",
+                          "parentId":  "wrk_civia",
+                          "name":  "4. Contatos de confiança",
+                          "metaSortKey":  400
+                      },
+                      {
+                          "_id":  "req_civia_20",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_4",
+                          "name":  "20 Cadastrar contato ativo (201)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios/1/contatos",
+                          "description":  "Status esperado: 201",
+                          "metaSortKey":  20,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"Maria Teste\",\r\n    \"telefone\":  \"+5511999990000\",\r\n    \"relacao\":  \"Irmã\",\r\n    \"ativo\":  true\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_21",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_4",
+                          "name":  "21 Cadastrar contato inativo (201)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios/1/contatos",
+                          "description":  "Status esperado: 201",
+                          "metaSortKey":  21,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"João Teste\",\r\n    \"telefone\":  \"11988887777\",\r\n    \"relacao\":  \"Amigo\",\r\n    \"ativo\":  false\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_22",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_4",
+                          "name":  "22 Telefone inválido (400)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios/1/contatos",
+                          "description":  "Status esperado: 400",
+                          "metaSortKey":  22,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"Carlos Teste\",\r\n    \"telefone\":  \"123\",\r\n    \"relacao\":  \"Vizinho\",\r\n    \"ativo\":  true\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_23",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_4",
+                          "name":  "23 Listar contatos (200)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/usuarios/1/contatos",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  23,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_24",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_4",
+                          "name":  "24 Atualizar contato (200)",
+                          "method":  "PUT",
+                          "url":  "{{ _.base_url }}/usuarios/1/contatos/2",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  24,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"nome\":  \"João Teste\",\r\n    \"telefone\":  \"11988887777\",\r\n    \"relacao\":  \"Amigo de trabalho\",\r\n    \"ativo\":  false\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "fld_civia_5",
+                          "_type":  "request_group",
+                          "parentId":  "wrk_civia",
+                          "name":  "5. Solicitações de ajuda",
+                          "metaSortKey":  500
+                      },
+                      {
+                          "_id":  "req_civia_25",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "25 Pedir ajuda a um contato (201)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios/1/solicitacoes",
+                          "description":  "Status esperado: 201",
+                          "metaSortKey":  25,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"tipo\":  \"AJUDA\",\r\n    \"contatoConfiancaId\":  1,\r\n    \"mensagem\":  \"Não encontro a entrada da plataforma 3 na Estação da Luz.\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_26",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "26 AJUDA sem contato (400)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios/1/solicitacoes",
+                          "description":  "Status esperado: 400",
+                          "metaSortKey":  26,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"tipo\":  \"AJUDA\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_27",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "27 AJUDA para contato inativo (400)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios/1/solicitacoes",
+                          "description":  "Status esperado: 400",
+                          "metaSortKey":  27,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"tipo\":  \"AJUDA\",\r\n    \"contatoConfiancaId\":  2\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_28",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "28 Acionar SOS (201)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios/1/solicitacoes",
+                          "description":  "Status esperado: 201",
+                          "metaSortKey":  28,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"tipo\":  \"SOS\",\r\n    \"latitude\":  -23.5345,\r\n    \"longitude\":  -46.6345\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_29",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "29 SOS sem localização (400)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/usuarios/1/solicitacoes",
+                          "description":  "Status esperado: 400",
+                          "metaSortKey":  29,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"tipo\":  \"SOS\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_30",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "30 Iniciar atendimento (200)",
+                          "method":  "PATCH",
+                          "url":  "{{ _.base_url }}/usuarios/1/solicitacoes/1/status",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  30,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"status\":  \"EM_ATENDIMENTO\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_31",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "31 Concluir atendimento (200)",
+                          "method":  "PATCH",
+                          "url":  "{{ _.base_url }}/usuarios/1/solicitacoes/1/status",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  31,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"status\":  \"CONCLUIDA\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_32",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "32 Reabrir solicitação concluída (409)",
+                          "method":  "PATCH",
+                          "url":  "{{ _.base_url }}/usuarios/1/solicitacoes/1/status",
+                          "description":  "Status esperado: 409",
+                          "metaSortKey":  32,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"status\":  \"ABERTA\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_33",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "33 Listar solicitações abertas (200)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/usuarios/1/solicitacoes?status=ABERTA",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  33,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_34",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "34 Consultar solicitação (200)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/usuarios/1/solicitacoes/1",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  34,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_35",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "35 Excluir contato com histórico (409)",
+                          "method":  "DELETE",
+                          "url":  "{{ _.base_url }}/usuarios/1/contatos/1",
+                          "description":  "Status esperado: 409",
+                          "metaSortKey":  35,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_36",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_5",
+                          "name":  "36 Excluir contato sem histórico (204)",
+                          "method":  "DELETE",
+                          "url":  "{{ _.base_url }}/usuarios/1/contatos/2",
+                          "description":  "Status esperado: 204",
+                          "metaSortKey":  36,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "fld_civia_6",
+                          "_type":  "request_group",
+                          "parentId":  "wrk_civia",
+                          "name":  "6. Alertas urbanos",
+                          "metaSortKey":  600
+                      },
+                      {
+                          "_id":  "req_civia_37",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_6",
+                          "name":  "37 Cadastrar mudança de plataforma (201)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/alertas",
+                          "description":  "Status esperado: 201",
+                          "metaSortKey":  37,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"titulo\":  \"Mudança de plataforma na Linha 7\",\r\n    \"descricao\":  \"Embarque transferido da plataforma 2 para a plataforma 3 até as 18h.\",\r\n    \"tipo\":  \"MUDANCA_PLATAFORMA\",\r\n    \"local\":  \"Estação da Luz\",\r\n    \"ativo\":  true\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_38",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_6",
+                          "name":  "38 Cadastrar elevador indisponível (201)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/alertas",
+                          "description":  "Status esperado: 201",
+                          "metaSortKey":  38,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"titulo\":  \"Elevador em manutenção\",\r\n    \"descricao\":  \"Elevador do acesso norte indisponível.\",\r\n    \"tipo\":  \"ELEVADOR_INDISPONIVEL\",\r\n    \"local\":  \"Estação Sé\",\r\n    \"ativo\":  true\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_39",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_6",
+                          "name":  "39 Alerta inválido (400)",
+                          "method":  "POST",
+                          "url":  "{{ _.base_url }}/alertas",
+                          "description":  "Status esperado: 400",
+                          "metaSortKey":  39,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"titulo\":  \"x\",\r\n    \"tipo\":  \"OBRA\"\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_40",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_6",
+                          "name":  "40 Filtrar alertas ativos por tipo (200)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/alertas?tipo=MUDANCA_PLATAFORMA\u0026ativo=true",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  40,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_41",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_6",
+                          "name":  "41 Encerrar alerta (200)",
+                          "method":  "PUT",
+                          "url":  "{{ _.base_url }}/alertas/1",
+                          "description":  "Status esperado: 200",
+                          "metaSortKey":  41,
+                          "headers":  [
+                                          {
+                                              "name":  "Content-Type",
+                                              "value":  "application/json"
+                                          }
+                                      ],
+                          "body":  {
+                                       "mimeType":  "application/json",
+                                       "text":  "{\r\n    \"titulo\":  \"Mudança de plataforma na Linha 7\",\r\n    \"descricao\":  \"Embarque normalizado na plataforma 2.\",\r\n    \"tipo\":  \"MUDANCA_PLATAFORMA\",\r\n    \"local\":  \"Estação da Luz\",\r\n    \"ativo\":  false\r\n}"
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_42",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_6",
+                          "name":  "42 Excluir alerta (204)",
+                          "method":  "DELETE",
+                          "url":  "{{ _.base_url }}/alertas/2",
+                          "description":  "Status esperado: 204",
+                          "metaSortKey":  42,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_43",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_6",
+                          "name":  "43 Alerta excluído (404)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/alertas/2",
+                          "description":  "Status esperado: 404",
+                          "metaSortKey":  43,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "fld_civia_7",
+                          "_type":  "request_group",
+                          "parentId":  "wrk_civia",
+                          "name":  "7. Exclusão em cascata",
+                          "metaSortKey":  700
+                      },
+                      {
+                          "_id":  "req_civia_44",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_7",
+                          "name":  "44 Excluir usuário Bruno (204)",
+                          "method":  "DELETE",
+                          "url":  "{{ _.base_url }}/usuarios/2",
+                          "description":  "Status esperado: 204",
+                          "metaSortKey":  44,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      },
+                      {
+                          "_id":  "req_civia_45",
+                          "_type":  "request",
+                          "parentId":  "fld_civia_7",
+                          "name":  "45 Usuário excluído (404)",
+                          "method":  "GET",
+                          "url":  "{{ _.base_url }}/usuarios/2",
+                          "description":  "Status esperado: 404",
+                          "metaSortKey":  45,
+                          "headers":  [
+
+                                      ],
+                          "body":  {
+
+                                   }
+                      }
+                  ]
+}

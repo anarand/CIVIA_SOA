@@ -1,0 +1,46 @@
+pasta	nome	metodo	caminho	esperado	corpo
+1. Usuários	01 Criar usuária Ana	POST	/usuarios	201	{"nome": "Ana Teste", "email": "ana.teste@civia.dev", "tipoDeficiencia": "BAIXA_VISAO"}
+1. Usuários	02 Criar usuário Bruno	POST	/usuarios	201	{"nome": "Bruno Teste", "email": "bruno.teste@civia.dev", "tipoDeficiencia": "SURDEZ"}
+1. Usuários	03 Email já cadastrado	POST	/usuarios	409	{"nome": "Ana Outra", "email": "ANA.TESTE@civia.dev", "tipoDeficiencia": "CEGUEIRA"}
+1. Usuários	04 Dados inválidos	POST	/usuarios	400	{"nome": "A", "email": "email-invalido", "tipoDeficiencia": "DALTONISMO"}
+1. Usuários	05 Listar usuários	GET	/usuarios	200
+1. Usuários	06 Consultar usuária	GET	/usuarios/1	200
+1. Usuários	07 Usuário inexistente	GET	/usuarios/999	404
+1. Usuários	08 Atualizar usuário	PUT	/usuarios/2	200	{"nome": "Bruno Teste Silva", "email": "bruno.teste@civia.dev", "tipoDeficiencia": "PERDA_AUDITIVA"}
+2. Preferências	09 Preferências ainda não configuradas	GET	/usuarios/1/preferencias	404
+2. Preferências	10 Salvar preferências	PUT	/usuarios/1/preferencias	200	{"canalPrincipal": "AUDIO", "vibracaoAtiva": true, "altoContraste": false, "priorizarElevador": true}
+2. Preferências	11 Consultar preferências	GET	/usuarios/1/preferencias	200
+2. Preferências	12 Preferências incompletas	PUT	/usuarios/1/preferencias	400	{"canalPrincipal": "AUDIO"}
+3. Locais de rotina	13 Cadastrar estação	POST	/usuarios/1/locais	201	{"nome": "Estação da Luz", "tipo": "ESTACAO", "endereco": "Praça da Luz, 1 - Luz, São Paulo - SP", "latitude": -23.5345, "longitude": -46.6345}
+3. Locais de rotina	14 Cadastrar casa	POST	/usuarios/1/locais	201	{"nome": "Casa", "tipo": "CASA", "endereco": "Rua Fictícia, 100 - São Paulo - SP"}
+3. Locais de rotina	15 Coordenada inválida	POST	/usuarios/1/locais	400	{"nome": "Trabalho", "tipo": "TRABALHO", "endereco": "Av. Paulista, 1000", "latitude": 120}
+3. Locais de rotina	16 Listar locais	GET	/usuarios/1/locais	200
+3. Locais de rotina	17 Atualizar local	PUT	/usuarios/1/locais/1	200	{"nome": "Estação da Luz (CPTM)", "tipo": "ESTACAO", "endereco": "Praça da Luz, 1 - Luz, São Paulo - SP", "latitude": -23.5345, "longitude": -46.6345}
+3. Locais de rotina	18 Local de outro usuário	GET	/usuarios/2/locais/1	404
+3. Locais de rotina	19 Excluir local	DELETE	/usuarios/1/locais/2	204
+4. Contatos de confiança	20 Cadastrar contato ativo	POST	/usuarios/1/contatos	201	{"nome": "Maria Teste", "telefone": "+5511999990000", "relacao": "Irmã", "ativo": true}
+4. Contatos de confiança	21 Cadastrar contato inativo	POST	/usuarios/1/contatos	201	{"nome": "João Teste", "telefone": "11988887777", "relacao": "Amigo", "ativo": false}
+4. Contatos de confiança	22 Telefone inválido	POST	/usuarios/1/contatos	400	{"nome": "Carlos Teste", "telefone": "123", "relacao": "Vizinho", "ativo": true}
+4. Contatos de confiança	23 Listar contatos	GET	/usuarios/1/contatos	200
+4. Contatos de confiança	24 Atualizar contato	PUT	/usuarios/1/contatos/2	200	{"nome": "João Teste", "telefone": "11988887777", "relacao": "Amigo de trabalho", "ativo": false}
+5. Solicitações de ajuda	25 Pedir ajuda a um contato	POST	/usuarios/1/solicitacoes	201	{"tipo": "AJUDA", "contatoConfiancaId": 1, "mensagem": "Não encontro a entrada da plataforma 3 na Estação da Luz."}
+5. Solicitações de ajuda	26 AJUDA sem contato	POST	/usuarios/1/solicitacoes	400	{"tipo": "AJUDA"}
+5. Solicitações de ajuda	27 AJUDA para contato inativo	POST	/usuarios/1/solicitacoes	400	{"tipo": "AJUDA", "contatoConfiancaId": 2}
+5. Solicitações de ajuda	28 Acionar SOS	POST	/usuarios/1/solicitacoes	201	{"tipo": "SOS", "latitude": -23.5345, "longitude": -46.6345}
+5. Solicitações de ajuda	29 SOS sem localização	POST	/usuarios/1/solicitacoes	400	{"tipo": "SOS"}
+5. Solicitações de ajuda	30 Iniciar atendimento	PATCH	/usuarios/1/solicitacoes/1/status	200	{"status": "EM_ATENDIMENTO"}
+5. Solicitações de ajuda	31 Concluir atendimento	PATCH	/usuarios/1/solicitacoes/1/status	200	{"status": "CONCLUIDA"}
+5. Solicitações de ajuda	32 Reabrir solicitação concluída	PATCH	/usuarios/1/solicitacoes/1/status	409	{"status": "ABERTA"}
+5. Solicitações de ajuda	33 Listar solicitações abertas	GET	/usuarios/1/solicitacoes?status=ABERTA	200
+5. Solicitações de ajuda	34 Consultar solicitação	GET	/usuarios/1/solicitacoes/1	200
+5. Solicitações de ajuda	35 Excluir contato com histórico	DELETE	/usuarios/1/contatos/1	409
+5. Solicitações de ajuda	36 Excluir contato sem histórico	DELETE	/usuarios/1/contatos/2	204
+6. Alertas urbanos	37 Cadastrar mudança de plataforma	POST	/alertas	201	{"titulo": "Mudança de plataforma na Linha 7", "descricao": "Embarque transferido da plataforma 2 para a plataforma 3 até as 18h.", "tipo": "MUDANCA_PLATAFORMA", "local": "Estação da Luz", "ativo": true}
+6. Alertas urbanos	38 Cadastrar elevador indisponível	POST	/alertas	201	{"titulo": "Elevador em manutenção", "descricao": "Elevador do acesso norte indisponível.", "tipo": "ELEVADOR_INDISPONIVEL", "local": "Estação Sé", "ativo": true}
+6. Alertas urbanos	39 Alerta inválido	POST	/alertas	400	{"titulo": "x", "tipo": "OBRA"}
+6. Alertas urbanos	40 Filtrar alertas ativos por tipo	GET	/alertas?tipo=MUDANCA_PLATAFORMA&ativo=true	200
+6. Alertas urbanos	41 Encerrar alerta	PUT	/alertas/1	200	{"titulo": "Mudança de plataforma na Linha 7", "descricao": "Embarque normalizado na plataforma 2.", "tipo": "MUDANCA_PLATAFORMA", "local": "Estação da Luz", "ativo": false}
+6. Alertas urbanos	42 Excluir alerta	DELETE	/alertas/2	204
+6. Alertas urbanos	43 Alerta excluído	GET	/alertas/2	404
+7. Exclusão em cascata	44 Excluir usuário Bruno	DELETE	/usuarios/2	204
+7. Exclusão em cascata	45 Usuário excluído	GET	/usuarios/2	404
