@@ -1,0 +1,706 @@
+openapi: 3.0.3
+info:
+  title: CIVIA API
+  version: 1.0.0
+  description: |
+    Backend acadêmico do CIVIA, CitizenTech de acessibilidade urbana para pessoas cegas,
+    com baixa visão, surdas ou com perda auditiva (Global Solution FIAP 2026.2, turma 3ESPS).
+
+    Este contrato foi escrito antes da implementação (contract-first). A API cobre o cadastro
+    do usuário e de suas preferências de acessibilidade, os locais de rotina, os contatos de
+    confiança, as solicitações de ajuda e SOS e os alertas urbanos.
+
+    Fora do escopo: óculos inteligentes, reconhecimento visual, navegação em tempo real,
+    envio real de notificações e integrações externas. Todos os dados usados são simulados.
+    A API não possui autenticação nesta versão (limitação conhecida, registrada no README).
+servers:
+  - url: http://localhost:5080
+    description: Execução local
+tags:
+  - name: Usuários
+    description: Cadastro do cidadão que utiliza o CIVIA.
+  - name: Preferências
+    description: Como cada usuário deseja receber os avisos (personalização).
+  - name: Locais de rotina
+    description: Lugares frequentes definidos pelo próprio usuário (casa, trabalho, estações).
+  - name: Contatos de confiança
+    description: Pessoas autorizadas pelo usuário a receber pedidos de ajuda.
+  - name: Solicitações de ajuda
+    description: Pedidos de ajuda a um contato de confiança e acionamentos de SOS.
+  - name: Alertas urbanos
+    description: Avisos sobre obras, elevadores indisponíveis, alagamentos e mudanças de plataforma.
+
+paths:
+  /api/usuarios:
+    get:
+      tags: [Usuários]
+      summary: Lista os usuários cadastrados
+      operationId: listarUsuarios
+      responses:
+        '200':
+          description: Lista de usuários, ordenada por nome. Lista vazia quando não há cadastros.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Usuario' }
+    post:
+      tags: [Usuários]
+      summary: Cadastra um usuário
+      description: O email é único em todo o sistema. As preferências de acessibilidade são cadastradas depois, em PUT /api/usuarios/{usuarioId}/preferencias.
+      operationId: criarUsuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UsuarioRequest' }
+      responses:
+        '201':
+          description: Usuário criado. O header Location aponta para o novo recurso.
+          headers:
+            Location:
+              schema: { type: string, example: /api/usuarios/1 }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Usuario' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+        '409': { $ref: '#/components/responses/Conflito' }
+
+  /api/usuarios/{usuarioId}:
+    parameters:
+      - $ref: '#/components/parameters/UsuarioId'
+    get:
+      tags: [Usuários]
+      summary: Consulta um usuário
+      operationId: obterUsuario
+      responses:
+        '200':
+          description: Dados do usuário.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Usuario' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    put:
+      tags: [Usuários]
+      summary: Atualiza os dados de um usuário
+      description: Substitui nome, email e tipo de deficiência. O email continua precisando ser único.
+      operationId: atualizarUsuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UsuarioRequest' }
+      responses:
+        '200':
+          description: Usuário atualizado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Usuario' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflito' }
+    delete:
+      tags: [Usuários]
+      summary: Exclui um usuário
+      description: Exclui também, em cascata, as preferências, os locais de rotina, os contatos de confiança e as solicitações do usuário.
+      operationId: excluirUsuario
+      responses:
+        '204': { description: Usuário excluído. }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+
+  /api/usuarios/{usuarioId}/preferencias:
+    parameters:
+      - $ref: '#/components/parameters/UsuarioId'
+    get:
+      tags: [Preferências]
+      summary: Consulta as preferências de acessibilidade do usuário
+      operationId: obterPreferencias
+      responses:
+        '200':
+          description: Preferências do usuário.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Preferencia' }
+        '404':
+          description: Usuário inexistente ou usuário que ainda não configurou preferências.
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Erro' }
+    put:
+      tags: [Preferências]
+      summary: Cria ou atualiza as preferências de acessibilidade
+      description: Operação idempotente. Cada usuário tem no máximo um conjunto de preferências (relação 1:1); repetir a mesma requisição produz o mesmo resultado.
+      operationId: salvarPreferencias
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PreferenciaRequest' }
+      responses:
+        '200':
+          description: Preferências salvas.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Preferencia' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+
+  /api/usuarios/{usuarioId}/locais:
+    parameters:
+      - $ref: '#/components/parameters/UsuarioId'
+    get:
+      tags: [Locais de rotina]
+      summary: Lista os locais de rotina do usuário
+      operationId: listarLocais
+      responses:
+        '200':
+          description: Locais de rotina do usuário, ordenados por nome.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/LocalRotina' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    post:
+      tags: [Locais de rotina]
+      summary: Cadastra um local de rotina
+      operationId: criarLocal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LocalRotinaRequest' }
+      responses:
+        '201':
+          description: Local criado.
+          headers:
+            Location:
+              schema: { type: string, example: /api/usuarios/1/locais/3 }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LocalRotina' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+
+  /api/usuarios/{usuarioId}/locais/{localId}:
+    parameters:
+      - $ref: '#/components/parameters/UsuarioId'
+      - name: localId
+        in: path
+        required: true
+        description: Identificador do local de rotina. Precisa pertencer ao usuário informado.
+        schema: { type: integer, format: int32, example: 3 }
+    get:
+      tags: [Locais de rotina]
+      summary: Consulta um local de rotina
+      operationId: obterLocal
+      responses:
+        '200':
+          description: Dados do local.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LocalRotina' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    put:
+      tags: [Locais de rotina]
+      summary: Atualiza um local de rotina
+      operationId: atualizarLocal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LocalRotinaRequest' }
+      responses:
+        '200':
+          description: Local atualizado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LocalRotina' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    delete:
+      tags: [Locais de rotina]
+      summary: Exclui um local de rotina
+      operationId: excluirLocal
+      responses:
+        '204': { description: Local excluído. }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+
+  /api/usuarios/{usuarioId}/contatos:
+    parameters:
+      - $ref: '#/components/parameters/UsuarioId'
+    get:
+      tags: [Contatos de confiança]
+      summary: Lista os contatos de confiança do usuário
+      operationId: listarContatos
+      responses:
+        '200':
+          description: Contatos do usuário, ordenados por nome. Inclui contatos inativos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ContatoConfianca' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    post:
+      tags: [Contatos de confiança]
+      summary: Cadastra um contato de confiança
+      operationId: criarContato
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ContatoConfiancaRequest' }
+      responses:
+        '201':
+          description: Contato criado.
+          headers:
+            Location:
+              schema: { type: string, example: /api/usuarios/1/contatos/2 }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ContatoConfianca' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+
+  /api/usuarios/{usuarioId}/contatos/{contatoId}:
+    parameters:
+      - $ref: '#/components/parameters/UsuarioId'
+      - name: contatoId
+        in: path
+        required: true
+        description: Identificador do contato. Precisa pertencer ao usuário informado.
+        schema: { type: integer, format: int32, example: 2 }
+    get:
+      tags: [Contatos de confiança]
+      summary: Consulta um contato de confiança
+      operationId: obterContato
+      responses:
+        '200':
+          description: Dados do contato.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ContatoConfianca' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    put:
+      tags: [Contatos de confiança]
+      summary: Atualiza um contato de confiança
+      description: Use ativo = false para desativar um contato sem perder o histórico de solicitações ligadas a ele.
+      operationId: atualizarContato
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ContatoConfiancaRequest' }
+      responses:
+        '200':
+          description: Contato atualizado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ContatoConfianca' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    delete:
+      tags: [Contatos de confiança]
+      summary: Exclui um contato de confiança
+      description: Um contato que já recebeu solicitações não pode ser excluído (409); nesse caso, desative-o com PUT e ativo = false.
+      operationId: excluirContato
+      responses:
+        '204': { description: Contato excluído. }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflito' }
+
+  /api/usuarios/{usuarioId}/solicitacoes:
+    parameters:
+      - $ref: '#/components/parameters/UsuarioId'
+    get:
+      tags: [Solicitações de ajuda]
+      summary: Lista as solicitações do usuário
+      operationId: listarSolicitacoes
+      parameters:
+        - name: status
+          in: query
+          required: false
+          description: Filtra pelo status atual da solicitação.
+          schema: { $ref: '#/components/schemas/StatusSolicitacao' }
+      responses:
+        '200':
+          description: Solicitações do usuário, das mais recentes para as mais antigas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/SolicitacaoAjuda' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    post:
+      tags: [Solicitações de ajuda]
+      summary: Abre uma solicitação de ajuda ou um SOS
+      description: |
+        Toda solicitação nasce com status ABERTA.
+        - AJUDA: contatoConfiancaId é obrigatório e o contato precisa estar ativo e pertencer ao usuário.
+        - SOS: latitude e longitude são obrigatórias (última localização conhecida); contatoConfiancaId é opcional.
+        A API apenas registra o pedido; nenhuma notificação real é enviada nesta versão.
+      operationId: criarSolicitacao
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SolicitacaoAjudaRequest' }
+            examples:
+              ajuda:
+                summary: Pedido de ajuda a um contato
+                value: { tipo: AJUDA, contatoConfiancaId: 2, mensagem: Não encontro a entrada da plataforma 3 na Estação da Luz. }
+              sos:
+                summary: Acionamento de emergência
+                value: { tipo: SOS, latitude: -23.5345, longitude: -46.6345 }
+      responses:
+        '201':
+          description: Solicitação registrada.
+          headers:
+            Location:
+              schema: { type: string, example: /api/usuarios/1/solicitacoes/5 }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SolicitacaoAjuda' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+
+  /api/usuarios/{usuarioId}/solicitacoes/{solicitacaoId}:
+    parameters:
+      - $ref: '#/components/parameters/UsuarioId'
+      - $ref: '#/components/parameters/SolicitacaoId'
+    get:
+      tags: [Solicitações de ajuda]
+      summary: Consulta uma solicitação
+      operationId: obterSolicitacao
+      responses:
+        '200':
+          description: Dados da solicitação.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SolicitacaoAjuda' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+
+  /api/usuarios/{usuarioId}/solicitacoes/{solicitacaoId}/status:
+    parameters:
+      - $ref: '#/components/parameters/UsuarioId'
+      - $ref: '#/components/parameters/SolicitacaoId'
+    patch:
+      tags: [Solicitações de ajuda]
+      summary: Altera o status de uma solicitação
+      description: |
+        Transições permitidas: ABERTA → EM_ATENDIMENTO → CONCLUIDA, e ABERTA ou EM_ATENDIMENTO → CANCELADA.
+        CONCLUIDA e CANCELADA são estados finais. Qualquer outra transição retorna 409.
+      operationId: alterarStatusSolicitacao
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AlterarStatusRequest' }
+      responses:
+        '200':
+          description: Status alterado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SolicitacaoAjuda' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflito' }
+
+  /api/alertas:
+    get:
+      tags: [Alertas urbanos]
+      summary: Lista os alertas urbanos
+      operationId: listarAlertas
+      parameters:
+        - name: tipo
+          in: query
+          required: false
+          description: Filtra pelo tipo de alerta.
+          schema: { $ref: '#/components/schemas/TipoAlerta' }
+        - name: ativo
+          in: query
+          required: false
+          description: true retorna só alertas vigentes; false, só os encerrados.
+          schema: { type: boolean, example: true }
+      responses:
+        '200':
+          description: Alertas, dos mais recentes para os mais antigos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AlertaUrbano' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+    post:
+      tags: [Alertas urbanos]
+      summary: Cadastra um alerta urbano
+      description: Nesta versão os alertas são cadastrados manualmente com dados simulados; não há integração com fontes oficiais.
+      operationId: criarAlerta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AlertaUrbanoRequest' }
+      responses:
+        '201':
+          description: Alerta criado.
+          headers:
+            Location:
+              schema: { type: string, example: /api/alertas/4 }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AlertaUrbano' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+
+  /api/alertas/{alertaId}:
+    parameters:
+      - name: alertaId
+        in: path
+        required: true
+        description: Identificador do alerta.
+        schema: { type: integer, format: int32, example: 4 }
+    get:
+      tags: [Alertas urbanos]
+      summary: Consulta um alerta urbano
+      operationId: obterAlerta
+      responses:
+        '200':
+          description: Dados do alerta.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AlertaUrbano' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    put:
+      tags: [Alertas urbanos]
+      summary: Atualiza um alerta urbano
+      description: Use ativo = false para encerrar um alerta mantendo o registro.
+      operationId: atualizarAlerta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AlertaUrbanoRequest' }
+      responses:
+        '200':
+          description: Alerta atualizado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AlertaUrbano' }
+        '400': { $ref: '#/components/responses/ErroValidacao' }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+    delete:
+      tags: [Alertas urbanos]
+      summary: Exclui um alerta urbano
+      operationId: excluirAlerta
+      responses:
+        '204': { description: Alerta excluído. }
+        '404': { $ref: '#/components/responses/NaoEncontrado' }
+
+components:
+  parameters:
+    UsuarioId:
+      name: usuarioId
+      in: path
+      required: true
+      description: Identificador do usuário dono do recurso.
+      schema: { type: integer, format: int32, example: 1 }
+    SolicitacaoId:
+      name: solicitacaoId
+      in: path
+      required: true
+      description: Identificador da solicitação. Precisa pertencer ao usuário informado.
+      schema: { type: integer, format: int32, example: 5 }
+
+  responses:
+    ErroValidacao:
+      description: Dados inválidos. O campo errors lista as mensagens por campo.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ErroValidacao' }
+    NaoEncontrado:
+      description: O recurso (ou o usuário dono dele) não existe.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Erro' }
+          example: { title: Recurso não encontrado, status: 404, detail: Usuário 99 não encontrado. }
+    Conflito:
+      description: A operação viola uma regra de negócio (email repetido, transição de status inválida ou contato com histórico).
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Erro' }
+          example: { title: Conflito com o estado atual, status: 409, detail: Já existe um usuário com o email ana.teste@civia.dev. }
+
+  schemas:
+    Erro:
+      type: object
+      description: Formato único de erro da API, no padrão RFC 7807 (Problem Details).
+      properties:
+        type: { type: string, example: 'https://tools.ietf.org/html/rfc9110#section-15.5.5' }
+        title: { type: string, example: Recurso não encontrado }
+        status: { type: integer, example: 404 }
+        detail: { type: string, example: Usuário 99 não encontrado. }
+        instance: { type: string, example: /api/usuarios/99 }
+    ErroValidacao:
+      allOf:
+        - $ref: '#/components/schemas/Erro'
+        - type: object
+          properties:
+            errors:
+              type: object
+              description: Mensagens de validação agrupadas pelo nome do campo.
+              additionalProperties:
+                type: array
+                items: { type: string }
+              example: { email: [O email informado não é válido.] }
+
+    TipoDeficiencia:
+      type: string
+      description: Perfil sensorial atendido pelo CIVIA.
+      enum: [CEGUEIRA, BAIXA_VISAO, SURDEZ, PERDA_AUDITIVA]
+      example: BAIXA_VISAO
+    CanalComunicacao:
+      type: string
+      description: Canal principal pelo qual o usuário prefere receber avisos.
+      enum: [AUDIO, VIBRACAO, LEGENDA, VISUAL]
+      example: AUDIO
+    TipoLocal:
+      type: string
+      enum: [CASA, TRABALHO, ESTACAO, OUTRO]
+      example: ESTACAO
+    TipoSolicitacao:
+      type: string
+      description: AJUDA é dirigida a um contato de confiança; SOS é o fluxo de emergência.
+      enum: [AJUDA, SOS]
+      example: AJUDA
+    StatusSolicitacao:
+      type: string
+      description: CONCLUIDA e CANCELADA são estados finais.
+      enum: [ABERTA, EM_ATENDIMENTO, CONCLUIDA, CANCELADA]
+      example: ABERTA
+    TipoAlerta:
+      type: string
+      enum: [OBRA, ELEVADOR_INDISPONIVEL, ALAGAMENTO, MUDANCA_PLATAFORMA, OUTRO]
+      example: MUDANCA_PLATAFORMA
+
+    UsuarioRequest:
+      type: object
+      required: [nome, email, tipoDeficiencia]
+      properties:
+        nome: { type: string, minLength: 2, maxLength: 100, example: Ana Teste }
+        email: { type: string, format: email, maxLength: 150, example: ana.teste@civia.dev }
+        tipoDeficiencia: { $ref: '#/components/schemas/TipoDeficiencia' }
+    Usuario:
+      allOf:
+        - type: object
+          properties:
+            id: { type: integer, format: int32, example: 1 }
+        - $ref: '#/components/schemas/UsuarioRequest'
+        - type: object
+          properties:
+            criadoEm: { type: string, format: date-time, example: '2026-11-15T14:30:00Z' }
+
+    PreferenciaRequest:
+      type: object
+      required: [canalPrincipal, vibracaoAtiva, altoContraste, priorizarElevador]
+      properties:
+        canalPrincipal: { $ref: '#/components/schemas/CanalComunicacao' }
+        vibracaoAtiva: { type: boolean, description: Usar padrões de vibração para destacar alertas., example: true }
+        altoContraste: { type: boolean, description: Exibir textos e legendas em alto contraste., example: false }
+        priorizarElevador: { type: boolean, description: Preferir trajetos com elevador quando houver essa informação., example: true }
+    Preferencia:
+      allOf:
+        - type: object
+          properties:
+            usuarioId: { type: integer, format: int32, example: 1 }
+        - $ref: '#/components/schemas/PreferenciaRequest'
+        - type: object
+          properties:
+            atualizadoEm: { type: string, format: date-time, example: '2026-11-15T14:35:00Z' }
+
+    LocalRotinaRequest:
+      type: object
+      required: [nome, tipo, endereco]
+      properties:
+        nome: { type: string, minLength: 2, maxLength: 100, example: Estação da Luz }
+        tipo: { $ref: '#/components/schemas/TipoLocal' }
+        endereco: { type: string, minLength: 5, maxLength: 200, example: 'Praça da Luz, 1 - Luz, São Paulo - SP' }
+        latitude: { type: number, format: double, minimum: -90, maximum: 90, nullable: true, example: -23.5345 }
+        longitude: { type: number, format: double, minimum: -180, maximum: 180, nullable: true, example: -46.6345 }
+    LocalRotina:
+      allOf:
+        - type: object
+          properties:
+            id: { type: integer, format: int32, example: 3 }
+            usuarioId: { type: integer, format: int32, example: 1 }
+        - $ref: '#/components/schemas/LocalRotinaRequest'
+        - type: object
+          properties:
+            criadoEm: { type: string, format: date-time, example: '2026-11-15T14:40:00Z' }
+
+    ContatoConfiancaRequest:
+      type: object
+      required: [nome, telefone, relacao, ativo]
+      properties:
+        nome: { type: string, minLength: 2, maxLength: 100, example: Maria Teste }
+        telefone: { type: string, pattern: '^\+?[0-9]{10,15}$', description: Somente dígitos, com DDD; o + inicial é opcional., example: '+5511999990000' }
+        relacao: { type: string, minLength: 2, maxLength: 50, example: Irmã }
+        ativo: { type: boolean, description: Apenas contatos ativos podem receber novas solicitações de AJUDA., example: true }
+    ContatoConfianca:
+      allOf:
+        - type: object
+          properties:
+            id: { type: integer, format: int32, example: 2 }
+            usuarioId: { type: integer, format: int32, example: 1 }
+        - $ref: '#/components/schemas/ContatoConfiancaRequest'
+        - type: object
+          properties:
+            criadoEm: { type: string, format: date-time, example: '2026-11-15T14:45:00Z' }
+
+    SolicitacaoAjudaRequest:
+      type: object
+      required: [tipo]
+      properties:
+        tipo: { $ref: '#/components/schemas/TipoSolicitacao' }
+        contatoConfiancaId: { type: integer, format: int32, nullable: true, description: Obrigatório quando tipo = AJUDA., example: 2 }
+        mensagem: { type: string, maxLength: 500, nullable: true, example: Não encontro a entrada da plataforma 3. }
+        latitude: { type: number, format: double, minimum: -90, maximum: 90, nullable: true, description: Obrigatória quando tipo = SOS., example: -23.5345 }
+        longitude: { type: number, format: double, minimum: -180, maximum: 180, nullable: true, description: Obrigatória quando tipo = SOS., example: -46.6345 }
+    SolicitacaoAjuda:
+      allOf:
+        - type: object
+          properties:
+            id: { type: integer, format: int32, example: 5 }
+            usuarioId: { type: integer, format: int32, example: 1 }
+            status: { $ref: '#/components/schemas/StatusSolicitacao' }
+        - $ref: '#/components/schemas/SolicitacaoAjudaRequest'
+        - type: object
+          properties:
+            criadoEm: { type: string, format: date-time, example: '2026-11-15T15:00:00Z' }
+            atualizadoEm: { type: string, format: date-time, example: '2026-11-15T15:05:00Z' }
+    AlterarStatusRequest:
+      type: object
+      required: [status]
+      properties:
+        status: { $ref: '#/components/schemas/StatusSolicitacao' }
+
+    AlertaUrbanoRequest:
+      type: object
+      required: [titulo, descricao, tipo, local, ativo]
+      properties:
+        titulo: { type: string, minLength: 3, maxLength: 120, example: Mudança de plataforma na Linha 7 }
+        descricao: { type: string, minLength: 3, maxLength: 500, example: Embarque transferido da plataforma 2 para a plataforma 3 até 18h. }
+        tipo: { $ref: '#/components/schemas/TipoAlerta' }
+        local: { type: string, minLength: 3, maxLength: 200, example: Estação da Luz }
+        ativo: { type: boolean, description: false indica alerta encerrado., example: true }
+    AlertaUrbano:
+      allOf:
+        - type: object
+          properties:
+            id: { type: integer, format: int32, example: 4 }
+        - $ref: '#/components/schemas/AlertaUrbanoRequest'
+        - type: object
+          properties:
+            criadoEm: { type: string, format: date-time, example: '2026-11-15T13:00:00Z' }
+            atualizadoEm: { type: string, format: date-time, example: '2026-11-15T13:00:00Z' }
