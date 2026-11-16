@@ -1,0 +1,99 @@
+# Verificação do banco CiviaDb após a migration e a execução do roteiro (2026-11-15 23:05)
+
+=== Migrations aplicadas (__EFMigrationsHistory)
+
+MigrationId                  ProductVersion
+-----------                  --------------
+20261116015955_InitialCreate 10.0.15       
+
+
+
+
+=== Tabelas e colunas
+
+Tabela                     Coluna             Tipo      Tamanho AceitaNulo
+------                     ------             ----      ------- ----------
+AlertasUrbanos             Id                 int             4 não       
+AlertasUrbanos             Titulo             nvarchar      120 não       
+AlertasUrbanos             Descricao          nvarchar      500 não       
+AlertasUrbanos             Tipo               nvarchar       30 não       
+AlertasUrbanos             Local              nvarchar      200 não       
+AlertasUrbanos             Ativo              bit             1 não       
+AlertasUrbanos             CriadoEm           datetime2       8 não       
+AlertasUrbanos             AtualizadoEm       datetime2       8 não       
+ContatosConfianca          Id                 int             4 não       
+ContatosConfianca          UsuarioId          int             4 não       
+ContatosConfianca          Nome               nvarchar      100 não       
+ContatosConfianca          Telefone           nvarchar       16 não       
+ContatosConfianca          Relacao            nvarchar       50 não       
+ContatosConfianca          Ativo              bit             1 não       
+ContatosConfianca          CriadoEm           datetime2       8 não       
+LocaisRotina               Id                 int             4 não       
+LocaisRotina               UsuarioId          int             4 não       
+LocaisRotina               Nome               nvarchar      100 não       
+LocaisRotina               Tipo               nvarchar       30 não       
+LocaisRotina               Endereco           nvarchar      200 não       
+LocaisRotina               Latitude           float           8 sim       
+LocaisRotina               Longitude          float           8 sim       
+LocaisRotina               CriadoEm           datetime2       8 não       
+PreferenciasAcessibilidade Id                 int             4 não       
+PreferenciasAcessibilidade UsuarioId          int             4 não       
+PreferenciasAcessibilidade CanalPrincipal     nvarchar       30 não       
+PreferenciasAcessibilidade VibracaoAtiva      bit             1 não       
+PreferenciasAcessibilidade AltoContraste      bit             1 não       
+PreferenciasAcessibilidade PriorizarElevador  bit             1 não       
+PreferenciasAcessibilidade AtualizadoEm       datetime2       8 não       
+SolicitacoesAjuda          Id                 int             4 não       
+SolicitacoesAjuda          UsuarioId          int             4 não       
+SolicitacoesAjuda          ContatoConfiancaId int             4 sim       
+SolicitacoesAjuda          Tipo               nvarchar       30 não       
+SolicitacoesAjuda          Status             nvarchar       30 não       
+SolicitacoesAjuda          Mensagem           nvarchar      500 sim       
+SolicitacoesAjuda          Latitude           float           8 sim       
+SolicitacoesAjuda          Longitude          float           8 sim       
+SolicitacoesAjuda          CriadoEm           datetime2       8 não       
+SolicitacoesAjuda          AtualizadoEm       datetime2       8 não       
+Usuarios                   Id                 int             4 não       
+Usuarios                   Nome               nvarchar      100 não       
+Usuarios                   Email              nvarchar      150 não       
+Usuarios                   TipoDeficiencia    nvarchar       30 não       
+Usuarios                   CriadoEm           datetime2       8 não       
+
+
+
+
+=== Chaves estrangeiras
+
+ChaveEstrangeira                                          TabelaFilha                Coluna             TabelaReferenciada AoExcluir
+----------------                                          -----------                ------             ------------------ ---------
+FK_ContatosConfianca_Usuarios_UsuarioId                   ContatosConfianca          UsuarioId          Usuarios           CASCADE  
+FK_LocaisRotina_Usuarios_UsuarioId                        LocaisRotina               UsuarioId          Usuarios           CASCADE  
+FK_PreferenciasAcessibilidade_Usuarios_UsuarioId          PreferenciasAcessibilidade UsuarioId          Usuarios           CASCADE  
+FK_SolicitacoesAjuda_Usuarios_UsuarioId                   SolicitacoesAjuda          UsuarioId          Usuarios           CASCADE  
+FK_SolicitacoesAjuda_ContatosConfianca_ContatoConfiancaId SolicitacoesAjuda          ContatoConfiancaId ContatosConfianca  NO_ACTION
+
+
+
+
+=== Índices únicos (além das chaves primárias)
+
+Tabela                     Indice                                 
+------                     ------                                 
+PreferenciasAcessibilidade IX_PreferenciasAcessibilidade_UsuarioId
+Usuarios                   IX_Usuarios_Email                      
+
+
+
+
+=== Quantidade de registros por tabela
+
+Tabela                     Registros
+------                     ---------
+Usuarios                           1
+PreferenciasAcessibilidade         1
+LocaisRotina                       1
+ContatosConfianca                  1
+SolicitacoesAjuda                  2
+AlertasUrbanos                     1
+
+

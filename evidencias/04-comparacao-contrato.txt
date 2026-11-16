@@ -1,0 +1,8 @@
+# Contract drift: docs/openapi.yaml x /swagger/v1/swagger.json (2026-11-15 23:05)
+Combinações rota + método + status no contrato: 65
+Combinações rota + método + status no código:   65
+
+Documentadas no contrato e ausentes no código:
+  nenhuma
+Presentes no código e ausentes no contrato:
+  nenhuma
